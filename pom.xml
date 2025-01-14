@@ -4,19 +4,24 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.29</version>
+        <version>4.88</version>
         <relativePath />
     </parent>
 
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>kubernetes-client-api</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>${revision}-${changelist}</version>
     <packaging>hpi</packaging>
     <properties>
-        <revision>5.7.3</revision>
-        <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.222.4</jenkins.version>
-        <java.level>8</java.level>
+        <revision>6.10.0</revision>
+        <changelist>999999-SNAPSHOT</changelist>
+        <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+        <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+        <jenkins.baseline>2.401</jenkins.baseline>
+        <jenkins.version>${jenkins.baseline}.3</jenkins.version>
+        <bom>${jenkins.baseline}.x</bom>
+        <bom.version>2745.vc7b_fe4c876fa_</bom.version>
+        <hpi.compatibleSinceVersion>6.8.1</hpi.compatibleSinceVersion>
     </properties>
     <name>Kubernetes Client API Plugin</name>
     <description>This plugin provides the fabric8.io Kubernetes Client API to plugins.</description>
@@ -29,9 +34,9 @@
     </licenses>
     <url>https://github.com/jenkinsci/kubernetes-client-api-plugin</url>
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+        <connection>scm:git:https://github.com/${gitHubRepo}</connection>
+        <developerConnection>scm:git:https://github.com/${gitHubRepo}</developerConnection>
+        <url>https://github.com/${gitHubRepo}</url>
         <tag>${scmTag}</tag>
     </scm>
 
@@ -51,8 +56,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.222.x</artifactId>
-                <version>887.vae9c8ac09ff7</version>
+                <artifactId>bom-${bom}</artifactId>
+                <version>${bom.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -98,12 +103,48 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
+                <!-- provided by io.jenkins.plugins:okhttp-api-->
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>logging-interceptor</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>openshift-client</artifactId>
             <version>${revision}</version>
+            <exclusions>
+                <!-- provided by org.jenkins-ci.plugins:jackson2-api  -->
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.dataformat</groupId>
+                    <artifactId>jackson-dataformat-yaml</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                    <artifactId>jackson-datatype-jsr310</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.module</groupId>
+                    <artifactId>jackson-module-jaxb-annotations</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
@@ -153,7 +194,7 @@
         </dependency>
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
-            <artifactId>snakeyaml-api</artifactId>
+            <artifactId>okhttp-api</artifactId>
         </dependency>
     </dependencies>
 </project>
